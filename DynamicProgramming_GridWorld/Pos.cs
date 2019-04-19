@@ -37,6 +37,12 @@ namespace DynamicProgramming_GridWorld {
         public static Pos operator * (Pos a, int b) =>
             new Pos (a.Row * b, a.Col * b);
 
+        public Pos Limit () {
+            int row = Math.Max (0, Math.Min (Rows - 1, Row));
+            int col = Math.Max (0, Math.Min (Cols - 1, Col));
+            return new Pos (row, col);
+        }
+
         public override bool Equals (object obj) {
             if (obj == null || GetType () != obj.GetType ())
                 return false;
@@ -45,5 +51,7 @@ namespace DynamicProgramming_GridWorld {
         }
         public override int GetHashCode () =>
             Row.GetHashCode () * 5 + Col.GetHashCode ();
+
+        public override string ToString () => $"r={Row}, c={Col}";
     }
 }

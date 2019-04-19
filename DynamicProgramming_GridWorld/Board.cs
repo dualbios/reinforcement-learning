@@ -37,9 +37,10 @@ namespace DynamicProgramming_GridWorld {
         public void Print () {
             for (int i = 0; i < Rows; i++) {
                 for (int j = 0; j < Cols; j++) 
-                    Console.Write ($"{Cells[i, j],4} ");
+                    Console.Write ($"{Cells[i, j],6:N2} ");
                 Console.WriteLine ();
             }
+            Console.WriteLine ();
         }
     }
 }
