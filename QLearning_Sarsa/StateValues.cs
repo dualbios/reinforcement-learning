@@ -26,7 +26,7 @@ namespace QLearning_Sarsa {
             return Color.FromArgb (red, 0, 0);
         }
 
-        public void TemporalDifferenceUpdate (State from, AgentAction action, float reward, State to) {
+        public void TemporalDifferenceUpdate (State from, float reward, State to) {
             this[from] = (1 - Learning.Rate) * this[from] +
                 Learning.Rate * (reward + Learning.FutureDiscount * this[to]);
         }

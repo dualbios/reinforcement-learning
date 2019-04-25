@@ -39,7 +39,7 @@
             this.ClientSize = new System.Drawing.Size(642, 623);
             this.DoubleBuffered = true;
             this.Name = "Form1";
-            this.Text = "Reinforcement Learning";
+            this.Text = "Cliff Walking Reinforcement Learning";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
             this.ResumeLayout(false);

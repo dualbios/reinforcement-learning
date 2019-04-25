@@ -67,8 +67,9 @@ namespace QLearning_Sarsa {
                 AgentAction nextAction = NextAction (nextPos);
                 float reward = nextPos.IsOffCliff ? -100 : -1;
                 score += reward;
-                qValues.SarsaUpdate (wandering, planAction, reward, nextPos, nextAction);
-                stateValues.TemporalDifferenceUpdate (wandering, planAction, reward, nextPos);
+                // qValues.SarsaUpdate (wandering, planAction, reward, nextPos, nextAction);
+                qValues.QLearningUpdate (wandering, planAction, reward, nextPos);
+                stateValues.TemporalDifferenceUpdate (wandering, reward, nextPos);
 
                 wandering = nextPos;
                 planAction = nextAction;

@@ -43,5 +43,11 @@ namespace QLearning_Sarsa {
             this[from, action] = (1 - Learning.Rate) * this[from, action] +
                 Learning.Rate * (reward + Learning.FutureDiscount * this[to, nextAction]);
         }
+
+        public void QLearningUpdate (State from, AgentAction action, float reward, State to) {
+            this[from, action] = (1 - Learning.Rate) * this[from, action] +
+                Learning.Rate * (reward + Learning.FutureDiscount * AgentAction.All
+                    .Select (nextAction => this[to, nextAction]).Max ());
+        }
     }
 }
