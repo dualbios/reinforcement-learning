@@ -20,6 +20,28 @@ namespace QLearning_Sarsa {
 
         public float this[State state, AgentAction action] {
             get => values[(state, action)];
+            private set => values[(state, action)] = value;
+        }
+
+        public AgentAction Greedy (State where) {
+            IList<AgentAction> best = new List<AgentAction> ();
+            float max = float.NegativeInfinity;
+            foreach (AgentAction action in AgentAction.All) {
+                float value = values[(where, action)];
+                if (value > max + 0.001f) {
+                    best.Clear ();
+                    best.Add (action);
+                    max = value;
+                }
+                else if (value > max - 0.001f)
+                    best.Add (action);
+            }
+            return Rng.Choose (best);
+        }
+
+        public void SarsaUpdate (State from, AgentAction action, float reward, State to, AgentAction nextAction) {
+            this[from, action] = (1 - Learning.Rate) * this[from, action] +
+                Learning.Rate * (reward + Learning.FutureDiscount * this[to, nextAction]);
         }
     }
 }

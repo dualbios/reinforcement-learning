@@ -17,12 +17,18 @@ namespace QLearning_Sarsa {
 
         public float this[State state] {
             get => values[state];
+            private set => values[state] = value;
         }
 
         public Color GetColor (State state) {
             float value = this[state];
-            int red = Math.Max (0, Math.Min (255, (int) (-value * 2.55f)));
+            int red = Math.Max (0, Math.Min (255, (int) (-value * 5 * 2.55f)));
             return Color.FromArgb (red, 0, 0);
+        }
+
+        public void TemporalDifferenceUpdate (State from, AgentAction action, float reward, State to) {
+            this[from] = (1 - Learning.Rate) * this[from] +
+                Learning.Rate * (reward + Learning.FutureDiscount * this[to]);
         }
     }
 }

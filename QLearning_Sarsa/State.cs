@@ -10,7 +10,7 @@ namespace QLearning_Sarsa {
         public const int Rows = 10;
         public const int Cols = 10;
 
-        public static State Start { get; } = new State (0, Cols - 1);
+        public static State Start { get; } = new State (Rows - 1, 0);
         public static State Goal { get; } = new State (Rows - 1, Cols - 1);
 
         public static IEnumerable<State> All =>
@@ -26,8 +26,8 @@ namespace QLearning_Sarsa {
             Col = col;
         }
 
-        public bool IsOffCliff => Row == Rows - 1 && Cols > 0 && Cols < Cols - 1;
-        public bool IsTerminal => Row == Rows - 1 && Cols > 0;
+        public bool IsOffCliff => Row == Rows - 1 && Col > 0 && Col < Cols - 1;
+        public bool IsTerminal => Row == Rows - 1 && Col > 0;
 
         public static State operator + (State a, State b) =>
             new State (

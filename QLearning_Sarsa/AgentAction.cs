@@ -12,12 +12,14 @@ namespace QLearning_Sarsa {
         public static AgentAction Down { get; } = new AgentAction (1, 0, "↓");
         public static AgentAction Left { get; } = new AgentAction (0, -1, "←");
 
-        public static new IEnumerable<AgentAction> All { get; } = new[] {
+        public static new IReadOnlyList<AgentAction> All { get; } = new[] {
             Up, Right, Down, Left
         };
 
         public string Name { get; }
 
         public AgentAction (int row, int col, string name) : base (row, col) => Name = name;
+
+        public static AgentAction Random () => Rng.Choose (All);
     }
 }
