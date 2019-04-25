@@ -20,7 +20,6 @@ namespace QLearning_Sarsa {
         private AgentAction planAction;
         private float score, reward;
         private int episode;
-        private bool greedyEpisode;
         private int speedFactor = 20;
 
         private Random random = new Random ();
@@ -37,7 +36,6 @@ namespace QLearning_Sarsa {
             score = 0;
 
             episode++;
-            // greedyEpisode = episode % 20 == 0;
         }
 
         private void Form1_Paint (object sender, PaintEventArgs e) {
@@ -50,9 +48,7 @@ namespace QLearning_Sarsa {
 
                     State drawing = new State (row, col);
                     Color color;
-                    if (drawing == wandering && greedyEpisode)
-                        color = Color.Yellow;
-                    else if (drawing == wandering)
+                    if (drawing == wandering)
                         color = Color.Green;
                     else
                         color = stateValues.GetColor (drawing);
@@ -71,10 +67,8 @@ namespace QLearning_Sarsa {
                 AgentAction nextAction = NextAction (nextPos);
                 float reward = nextPos.IsOffCliff ? -100 : -1;
                 score += reward;
-                if (!greedyEpisode) {
-                    qValues.SarsaUpdate (wandering, planAction, reward, nextPos, nextAction);
-                    stateValues.TemporalDifferenceUpdate (wandering, planAction, reward, nextPos);
-                }
+                qValues.SarsaUpdate (wandering, planAction, reward, nextPos, nextAction);
+                stateValues.TemporalDifferenceUpdate (wandering, planAction, reward, nextPos);
 
                 wandering = nextPos;
                 planAction = nextAction;
@@ -94,9 +88,7 @@ namespace QLearning_Sarsa {
         }
 
         private AgentAction NextAction (State from) {
-            if (greedyEpisode)
-                return qValues.Greedy (from);
-            else if (random.NextDouble () < Explore)
+            if (random.NextDouble () < Explore)
                 return AgentAction.Random ();
             else
                 return qValues.Greedy (from);
