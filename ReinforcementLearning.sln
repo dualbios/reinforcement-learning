@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicProgramming_GridWorld", "DynamicProgramming_GridWorld\DynamicProgramming_GridWorld.csproj", "{33398B60-37EF-4EB7-AC4B-F0572F61EA52}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QLearning_Sarsa", "QLearning_Sarsa\QLearning_Sarsa.csproj", "{AF713DC0-64C1-4AB4-94B0-CCA7F29FF44A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindyGridworld", "WindyGridworld\WindyGridworld.csproj", "{FA76CA29-266E-4B69-9761-80CC496681B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{AF713DC0-64C1-4AB4-94B0-CCA7F29FF44A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF713DC0-64C1-4AB4-94B0-CCA7F29FF44A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF713DC0-64C1-4AB4-94B0-CCA7F29FF44A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA76CA29-266E-4B69-9761-80CC496681B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA76CA29-266E-4B69-9761-80CC496681B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA76CA29-266E-4B69-9761-80CC496681B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA76CA29-266E-4B69-9761-80CC496681B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
