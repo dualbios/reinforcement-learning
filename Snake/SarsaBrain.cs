@@ -12,9 +12,9 @@ namespace Snake {
         private const float Alpha_LearningRate = 0.02f;
         private const float Gamma_FutureDiscount = 0.9f;
         private const float Epsilon_Greed = 0.00f;
-        private const float RegularizationWeight = 0.000f;
+        private const float RegularizationWeight = 0.0f;
         private const int Sensors = 3 * 8;  // 24
-        private const int Hiddens = 100;
+        private const int Hiddens = 50;
         private ComputationalNetwork valueFunction;
 
         private IReadOnlyList<float> oldState;
@@ -31,7 +31,7 @@ namespace Snake {
         }
         private ComputationalNetwork BuildNetwork () {
             ComputationalNetwork net = new ComputationalNetwork (
-                "value function", new StochasticGradientAscent (
+                "value function", new StochasticGradientDescent (
                     new HyperParameters (RegularizationWeight, Alpha_LearningRate)));
 
             IGate last = net.AddInput ("input", new InputGate (TensorSize.Column (Sensors)));
@@ -42,9 +42,9 @@ namespace Snake {
             last = net.AddOutput ("fc2", new FullyConnectedGate (last, Hiddens, 1, afterRelu: true));
             valueGate = last;
 
-            last = net.AddHidden ("gamma * V(last)", new ConstMultGate (last, Gamma_FutureDiscount));
-            last = net.AddHidden ("R + gamma * V(last)", new AddGate (last, inputReward));
-            last = net.AddHidden ("delta = R + gamma * V(last) - V(next)", new SubtractGate (last, inputNextStateValue));
+            IGate target = net.AddHidden ("gamma * V(next)", new ConstMultGate (inputNextStateValue, Gamma_FutureDiscount));
+            target = net.AddHidden ("R + gamma * V(next)", new AddGate (inputReward, target));
+            last = net.AddHidden ("delta = R + gamma * V(next) - V(last)", new SubtractGate (target, last));
             last = net.AddHidden ("delta^2", new SquareGate (last));
             last = net.AddHidden ("update Loss", new ConstMultGate (last, 0.5f));
 

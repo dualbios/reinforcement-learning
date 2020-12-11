@@ -119,11 +119,11 @@ namespace Snake {
             Pos pos = Snake.Head + dir;
             Snake newSnake = Snake.MoveTo (pos, pos == Apple);
             if (!Field.Contains (pos) || Snake.Body.Contains (pos))
-                return (reward: -1, new Game (Field, newSnake, Apple, Brain, Age + 1, AteApples, isTerminal: true));
+                return (reward: -10, new Game (Field, newSnake, Apple, Brain, Age + 1, AteApples, isTerminal: true));
             else if (pos == Apple)
                 return (reward: 1, new Game (Field, newSnake, Pos.Random (Field), Brain, Age + 1, AteApples + 1, isTerminal: false));
             else
-                return (reward: 0, new Game (Field, newSnake, Apple, Brain, Age + 1, AteApples, isTerminal: false));
+                return (reward: -0.01f, new Game (Field, newSnake, Apple, Brain, Age + 1, AteApples, isTerminal: false));
         }
     }
 }
