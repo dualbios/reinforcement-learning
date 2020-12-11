@@ -11,7 +11,7 @@ namespace Snake {
     class SarsaBrain : IBrain {
         private const float Alpha_LearningRate = 0.02f;
         private const float Gamma_FutureDiscount = 0.9f;
-        private const float Epsilon_Greed = 0.00f;
+        private const float Epsilon_ExplorationChance = 0.1f;
         private const float RegularizationWeight = 0.0f;
         private const int Sensors = 3 * 8;  // 24
         private const int Hiddens = 50;
@@ -73,8 +73,17 @@ namespace Snake {
         private int EpsilonGreedyAction (Game state) {
             int actions = Pos.Dir4.Count;
 
-            if (Rng.Float () < Epsilon_Greed)
-                return Rng.IntEx (actions);
+            if (Rng.Float () < Epsilon_ExplorationChance) {
+                List<int> nonlethalActions = new List<int> ();
+                foreach ((int i, Pos dir) in Pos.Dir4.WithIndex ()) {
+                    (float _, Game afterState) = state.TakeAction (dir);
+                    if (!afterState.IsTerminal)
+                        nonlethalActions.Add (i);
+                }
+                if (nonlethalActions.Count == 0)
+                    return Rng.IntEx (actions);
+                return nonlethalActions.ChooseRandom ();
+            }
 
             float[] values = new float[actions];
             foreach ((int i, Pos dir) in Pos.Dir4.WithIndex ()) {
