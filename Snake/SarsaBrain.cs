@@ -10,7 +10,7 @@ using Util;
 namespace Snake {
     class SarsaBrain : IBrain {
         private const float Alpha_LearningRate = 0.02f;
-        private const float Gamma_FutureDiscount = 0.9f;
+        private const float Gamma_FutureDiscount = 0.8f;
         private const float Epsilon_ExplorationChance = 0.1f;
         private const float RegularizationWeight = 0.0f;
         private const int Sensors = 3 * 8;  // 24
@@ -23,6 +23,7 @@ namespace Snake {
         private int nextAction;
 
         private float oldStateValue;
+        private float lastDelta;
 
         private IGate valueGate;
 
@@ -113,6 +114,7 @@ namespace Snake {
             // Sarsa here
             float newStateValue = ValueFunction (newState);
             float oldStateValue = ValueFunction_PrepareToLearn (oldState, reward, newStateValue);
+            float delta = reward + Gamma_FutureDiscount * newStateValue - oldStateValue;
 
             valueFunction.ScalarBackward (1f);
             //foreach ((IParameterGate gate, Tensor gradient) in valueFunction.ParameterGradients)
@@ -124,9 +126,10 @@ namespace Snake {
             this.oldStateValue = newStateValue;
             newState = null;
             nextAction = -1;
+            lastDelta = delta;
         }
 
         public string GetStatisticsString () =>
-            $"Value = {oldStateValue}\r\nAction = {lastAction}";
+            $"Value: {oldStateValue:F4}\r\nUpdate: {lastDelta:F4}";
     }
 }

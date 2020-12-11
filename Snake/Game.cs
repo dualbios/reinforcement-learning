@@ -66,7 +66,8 @@ namespace Snake {
         private void DrawCell (Graphics g, Pos pos, Brush brush) =>
             g.FillRectangle (brush, pos.Col * Scale, pos.Row * Scale, Scale, Scale);
         private string GetStatisticsString () =>
-            $"Age: {Age}\r\nApples: {AteApples}\r\n" + Brain.GetStatisticsString ();
+            $"Age: {Age}\r\nApples: {AteApples}\r\nLength: {Snake.Body.Count}\r\n"
+                + Brain.GetStatisticsString ();
 
         public static void Step (ref Game game) {
             int lastAction = game.Brain.ChooseLastAction (game);
@@ -119,7 +120,7 @@ namespace Snake {
             Pos pos = Snake.Head + dir;
             Snake newSnake = Snake.MoveTo (pos, pos == Apple);
             if (!Field.Contains (pos) || Snake.Body.Contains (pos))
-                return (reward: -10, new Game (Field, newSnake, Apple, Brain, Age + 1, AteApples, isTerminal: true));
+                return (reward: -1, new Game (Field, newSnake, Apple, Brain, Age + 1, AteApples, isTerminal: true));
             else if (pos == Apple)
                 return (reward: 1, new Game (Field, newSnake, Pos.Random (Field), Brain, Age + 1, AteApples + 1, isTerminal: false));
             else
