@@ -11,11 +11,18 @@ namespace Snake {
     class SarsaBrain : IBrain {
         private const float Alpha_LearningRate = 0.02f;
         private const float Gamma_FutureDiscount = 0.8f;
-        private const float Epsilon_ExplorationChance = 0.1f;
         private const float RegularizationWeight = 0.0f;
         private const int Sensors = 3 * 8;  // 24
         private const int Hiddens = 50;
         private ComputationalNetwork valueFunction;
+
+        private const float Initial_Epsilon_ExplorationChance = 0.1f;
+        private const float Epsilon_Reduction = 0.9f;
+        private const int InitialApplesGoal = 10;
+        private const int ApplesGoalIncrement = 2;
+        private float epsilon_explorationChance = Initial_Epsilon_ExplorationChance;
+        private int cumulativeAteApples = 0;
+        private int applesGoal = InitialApplesGoal;
 
         private IReadOnlyList<float> oldState;
         private int lastAction;
@@ -59,8 +66,18 @@ namespace Snake {
         }
 
         public void NextEpisode (Game state) {
+            UpdateEpsilon (state);
+
             oldState = state.GatherSensors ();
             lastAction = EpsilonGreedyAction (state);
+        }
+        private void UpdateEpsilon (Game state) {
+            cumulativeAteApples += state.AteApples;
+            if (cumulativeAteApples >= applesGoal) {
+                cumulativeAteApples -= applesGoal;
+                applesGoal += ApplesGoalIncrement;
+                epsilon_explorationChance *= Epsilon_Reduction;
+            }
         }
 
         public int ChooseLastAction (Game state) =>
@@ -74,7 +91,7 @@ namespace Snake {
         private int EpsilonGreedyAction (Game state) {
             int actions = Pos.Dir4.Count;
 
-            if (Rng.Float () < Epsilon_ExplorationChance) {
+            if (Rng.Float () < epsilon_explorationChance) {
                 List<int> nonlethalActions = new List<int> ();
                 foreach ((int i, Pos dir) in Pos.Dir4.WithIndex ()) {
                     (float _, Game afterState) = state.TakeAction (dir);
@@ -130,6 +147,6 @@ namespace Snake {
         }
 
         public string GetStatisticsString () =>
-            $"Value: {oldStateValue:F4}\r\nUpdate: {lastDelta:F4}";
+            $"Value: {oldStateValue:F4}\r\nUpdate: {lastDelta:F4}\r\n\u03b5 {epsilon_explorationChance} ({cumulativeAteApples}/{applesGoal})";
     }
 }
