@@ -9,6 +9,8 @@ using Util;
 namespace Snake {
     class Game {
         public const int Scale = 20;
+        public const int InitialFood = 400;
+        public const int FoodPerApple = 200;
 
         public Field Field { get; }
         public Snake Snake { get; private set; }
@@ -20,20 +22,28 @@ namespace Snake {
 
         public int Age { get; private set; }
         public int AteApples { get; private set; }
+        public int FoodRemaining { get; private set; }
         public bool IsTerminal { get; }
 
-        public Game (Field field, Snake snake, Pos apple, IBrain brain, int age, int ateApples, bool isTerminal) {
+        public Game (
+            Field field, Snake snake, Pos apple, IBrain brain,
+            int age, int ateApples, int foodRemaining, bool isTerminal
+        ) {
             Field = field;
             Snake = snake;
             Apple = apple;
             Brain = brain;
             Age = age;
             AteApples = ateApples;
+            FoodRemaining = foodRemaining;
             IsTerminal = isTerminal;
         }
         public static Game NewRandomGame () {
             Field field = new Field ();
-            Game game = new Game (field, Snake.Random (field), Pos.Random (field), new SarsaBrain (), 0, 0, isTerminal: false);
+            Game game = new Game (
+                field, Snake.Random (field), Pos.Random (field), new SarsaBrain (),
+                0, 0, InitialFood, isTerminal: false
+            );
             game.Reset ();
             return game;
         }
@@ -45,6 +55,7 @@ namespace Snake {
 
             Age = 0;
             AteApples = 0;
+            FoodRemaining = InitialFood;
         }
 
         private Font font = new Font (new FontFamily ("Arial"), 18);
@@ -66,7 +77,7 @@ namespace Snake {
         private void DrawCell (Graphics g, Pos pos, Brush brush) =>
             g.FillRectangle (brush, pos.Col * Scale, pos.Row * Scale, Scale, Scale);
         private string GetStatisticsString () =>
-            $"Age: {Age}\r\nApples: {AteApples}\r\nLength: {Snake.Body.Count}\r\n"
+            $"Age: {Age}\r\nFood: {FoodRemaining}\r\nApples: {AteApples}\r\n"
                 + Brain.GetStatisticsString ();
 
         public static void Step (ref Game game) {
@@ -76,7 +87,7 @@ namespace Snake {
             game = afterstate;
             int nextAction = game.Brain.ChooseNextAction (game);
             game.Brain.Correct (reward);
-            if (game.IsTerminal)
+            if (game.IsTerminal || game.FoodRemaining < 0)
                 game.Reset ();
         }
 
@@ -120,11 +131,14 @@ namespace Snake {
             Pos pos = Snake.Head + dir;
             Snake newSnake = Snake.MoveTo (pos, pos == Apple);
             if (!Field.Contains (pos) || Snake.Body.Contains (pos))
-                return (reward: -1, new Game (Field, newSnake, Apple, Brain, Age + 1, AteApples, isTerminal: true));
+                return (reward: -1, new Game (Field, newSnake, Apple, Brain,
+                    Age + 1, AteApples, FoodRemaining - 1, isTerminal: true));
             else if (pos == Apple)
-                return (reward: 1, new Game (Field, newSnake, Pos.Random (Field), Brain, Age + 1, AteApples + 1, isTerminal: false));
+                return (reward: 1, new Game (Field, newSnake, Pos.Random (Field), Brain,
+                    Age + 1, AteApples + 1, FoodRemaining + FoodPerApple - 1, isTerminal: false));
             else
-                return (reward: -0.01f, new Game (Field, newSnake, Apple, Brain, Age + 1, AteApples, isTerminal: false));
+                return (reward: -0.01f, new Game (Field, newSnake, Apple, Brain,
+                    Age + 1, AteApples, FoodRemaining - 1, isTerminal: false));
         }
     }
 }
