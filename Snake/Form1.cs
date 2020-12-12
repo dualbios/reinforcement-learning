@@ -14,18 +14,27 @@ namespace Snake {
         private float speed = 1;
         private int frameSkip = 0;
 
+        private DateTime started = DateTime.Now;
+        private int globalStep = 0;
+
         public Form1 () {
             InitializeComponent ();
         }
 
         private void timer_Tick (object sender, EventArgs e) {
+            globalStep++;
             for (int i = 0; i < frameSkip + 1; i++)
                 Game.Step (ref game);
             Invalidate ();
         }
 
         private void Form1_Paint (object sender, PaintEventArgs e) =>
-            game.Draw (e.Graphics);
+            game.Draw (e.Graphics, GetStatisticsString ());
+        private string GetStatisticsString () {
+            TimeSpan spent = DateTime.Now - started;
+            string spentString = spent.TotalHours >= 1 ? $"{spent:hh\\:mm\\:ss}" : $"{spent:m\\:ss}";
+            return $"{spentString}\r\nStep: {globalStep}";
+        }
 
         private void Form1_KeyPress (object sender, KeyPressEventArgs e) {
             if (e.KeyChar == '=' || e.KeyChar == '+')

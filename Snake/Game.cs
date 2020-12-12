@@ -48,7 +48,7 @@ namespace Snake {
         }
 
         private Font font = new Font (new FontFamily ("Arial"), 18);
-        public void Draw (Graphics g) {
+        public void Draw (Graphics g, string statistics) {
             for (int row = 0; row < Height; row++)
                 for (int col = 0; col < Width; col++) {
                     Pos pos = new Pos (row, col);
@@ -61,7 +61,7 @@ namespace Snake {
                     else
                         DrawCell (g, pos, Brushes.Black);
                 }
-            g.DrawString (GetStatisticsString (), font, Brushes.Yellow, new Point (0, 0));
+            g.DrawString ($"{statistics}\r\n{GetStatisticsString ()}", font, Brushes.Yellow, new Point (0, 0));
         }
         private void DrawCell (Graphics g, Pos pos, Brush brush) =>
             g.FillRectangle (brush, pos.Col * Scale, pos.Row * Scale, Scale, Scale);
