@@ -89,8 +89,10 @@ namespace Snake {
         public static void Step (ref Game game) {
             int lastAction = game.Brain.ChooseLastAction (game);
             Pos dir = Pos.Dir4[lastAction];
-            (float reward, Game afterstate) = game.TakeAction (dir);
+            (float reward, Game afterstate, bool ateApple) = game.TakeAction (dir);
             game = afterstate;
+            if (ateApple)
+                game.Brain.AteApple ();
             int nextAction = game.Brain.ChooseNextAction (game);
             game.Brain.Correct (reward);
             if (game.IsTerminal || game.FoodRemaining < 0)
@@ -133,18 +135,24 @@ namespace Snake {
                 .ToArray (sensorKinds * dirs);
         }
 
-        public (float reward, Game afterstate) TakeAction (Pos dir) {
+        public (float reward, Game afterstate, bool ateApple) TakeAction (Pos dir) {
             Pos pos = Snake.Head + dir;
             Snake newSnake = Snake.MoveTo (pos, pos == Apple);
             if (!Field.Contains (pos) || Snake.Body.Contains (pos))
-                return (reward: -1, new Game (Field, newSnake, Apple, Brain,
-                    Age + 1, AteApples, FoodRemaining - 1, isTerminal: true));
+                return (reward: -1,
+                    new Game (Field, newSnake, Apple, Brain,
+                        Age + 1, AteApples, FoodRemaining - 1, isTerminal: true),
+                    ateApple: false);
             else if (pos == Apple)
-                return (reward: 1, new Game (Field, newSnake, Pos.Random (Field), Brain,
-                    Age + 1, AteApples + 1, FoodRemaining + FoodPerApple - 1, isTerminal: false));
+                return (reward: 1,
+                    new Game (Field, newSnake, Pos.Random (Field), Brain,
+                        Age + 1, AteApples + 1, FoodRemaining + FoodPerApple - 1, isTerminal: false),
+                    ateApple: true);
             else
-                return (reward: -0.01f, new Game (Field, newSnake, Apple, Brain,
-                    Age + 1, AteApples, FoodRemaining - 1, isTerminal: false));
+                return (reward: -0.01f,
+                    new Game (Field, newSnake, Apple, Brain,
+                        Age + 1, AteApples, FoodRemaining - 1, isTerminal: false),
+                    ateApple: false);
         }
     }
 }

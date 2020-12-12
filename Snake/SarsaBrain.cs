@@ -66,13 +66,11 @@ namespace Snake {
         }
 
         public void NextEpisode (Game state) {
-            UpdateEpsilon (state);
-
             oldState = state.GatherSensors ();
             lastAction = EpsilonGreedyAction (state);
         }
-        private void UpdateEpsilon (Game state) {
-            cumulativeAteApples += state.AteApples;
+        public void AteApple () {
+            cumulativeAteApples++;
             if (cumulativeAteApples >= applesGoal) {
                 cumulativeAteApples -= applesGoal;
                 applesGoal += ApplesGoalIncrement;
@@ -94,7 +92,7 @@ namespace Snake {
             if (Rng.Float () < epsilon_explorationChance) {
                 List<int> nonlethalActions = new List<int> ();
                 foreach ((int i, Pos dir) in Pos.Dir4.WithIndex ()) {
-                    (float _, Game afterState) = state.TakeAction (dir);
+                    (float _, Game afterState, bool _) = state.TakeAction (dir);
                     if (!afterState.IsTerminal)
                         nonlethalActions.Add (i);
                 }
@@ -105,7 +103,7 @@ namespace Snake {
 
             float[] values = new float[actions];
             foreach ((int i, Pos dir) in Pos.Dir4.WithIndex ()) {
-                (float reward, Game afterState) = state.TakeAction (dir);
+                (float reward, Game afterState, bool _) = state.TakeAction (dir);
                 if (afterState.IsTerminal) {
                     values[i] = reward;
                     continue;  // value is 0 by definition
