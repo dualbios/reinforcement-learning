@@ -12,6 +12,6 @@ namespace Snake {
         int ChooseNextAction (Game state);
         void Correct (float reward);
 
-        string GetStatisticsString ();
+        IReadOnlyList<string> GetStatisticsStrings ();
     }
 }

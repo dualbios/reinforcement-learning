@@ -29,11 +29,14 @@ namespace Snake {
         }
 
         private void Form1_Paint (object sender, PaintEventArgs e) =>
-            game.Draw (e.Graphics, GetStatisticsString ());
-        private string GetStatisticsString () {
+            game.Draw (e.Graphics, GetStatisticsStrings ());
+        private IReadOnlyList<string> GetStatisticsStrings () {
             TimeSpan spent = DateTime.Now - started;
             string spentString = spent.TotalHours >= 1 ? $"{spent:hh\\:mm\\:ss}" : $"{spent:m\\:ss}";
-            return $"{spentString}\r\nStep: {globalStep}";
+            return new[] {
+                spentString,
+                $"Step: {globalStep}"
+            };
         }
 
         private void Form1_KeyPress (object sender, KeyPressEventArgs e) {

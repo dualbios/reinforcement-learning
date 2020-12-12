@@ -59,7 +59,7 @@ namespace Snake {
         }
 
         private Font font = new Font (new FontFamily ("Arial"), 18);
-        public void Draw (Graphics g, string statistics) {
+        public void Draw (Graphics g, IReadOnlyList<string> statistics) {
             for (int row = 0; row < Height; row++)
                 for (int col = 0; col < Width; col++) {
                     Pos pos = new Pos (row, col);
@@ -72,13 +72,19 @@ namespace Snake {
                     else
                         DrawCell (g, pos, Brushes.Black);
                 }
-            g.DrawString ($"{statistics}\r\n{GetStatisticsString ()}", font, Brushes.Yellow, new Point (0, 0));
+            string info = statistics
+                .Concat (GetStatisticsStrings ())
+                .Concat (Brain.GetStatisticsStrings ())
+                .StringJoin ("\r\n");
+            g.DrawString (info, font, Brushes.Black, new Point (Width * Scale, 0));
         }
         private void DrawCell (Graphics g, Pos pos, Brush brush) =>
             g.FillRectangle (brush, pos.Col * Scale, pos.Row * Scale, Scale, Scale);
-        private string GetStatisticsString () =>
-            $"Age: {Age}\r\nFood: {FoodRemaining}\r\nApples: {AteApples}\r\n"
-                + Brain.GetStatisticsString ();
+        private IReadOnlyList<string> GetStatisticsStrings () => new[] {
+            $"Age: {Age}",
+            $"Food: {FoodRemaining}",
+            $"Apples: {AteApples}"
+        };
 
         public static void Step (ref Game game) {
             int lastAction = game.Brain.ChooseLastAction (game);

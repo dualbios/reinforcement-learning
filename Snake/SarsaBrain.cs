@@ -146,7 +146,9 @@ namespace Snake {
             lastDelta = delta;
         }
 
-        public string GetStatisticsString () =>
-            $"Value: {oldStateValue:F4}\r\nUpdate: {lastDelta:F4}\r\n\u03b5 {epsilon_explorationChance} ({cumulativeAteApples}/{applesGoal})";
+        public IReadOnlyList<string> GetStatisticsStrings () => new[] {
+            $"Value: {oldStateValue:F4}",
+            $"\u03b5: {Math.Round (epsilon_explorationChance, 6)} ({cumulativeAteApples}/{applesGoal})"
+        };
     }
 }
